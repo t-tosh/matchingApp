@@ -15,6 +15,8 @@ class Api::V1::UsersController < ApplicationController
     @user.prefecture = user_params[:prefecture]
     @user.profile = user_params[:profile]
     @user.image = user_params[:image] if user_params[:image] != ""
+    @user.gender = user_params[:gender]
+    @user.birthday = user_params[:birthday]
 
     if @user.save
       render json: {status: :ok, user: @user}
@@ -30,6 +32,6 @@ class Api::V1::UsersController < ApplicationController
     end
 
     def user_params
-      params.permit(:name, :prefecture, :profile, :image)
+      params.permit(:name, :prefecture, :profile, :image, :gender, :birthday)
     end
 end

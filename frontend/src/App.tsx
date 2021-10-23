@@ -7,11 +7,15 @@ import ChatRooms from "components/pages/ChatRooms"
 import ChatRoom from "components/pages/ChatRoom"
 import Users from "components/pages/Users"
 import SignUp from "components/pages/SignUp"
-import SignIn from "components/pages/SignIn"
 import NotFound from "components/pages/NotFound"
+
+//Googleログインテスト
+import socialAuth from "components/socialAuth/SocialAuth";
+import Callback from "components/pages/Callback";
 
 import { getCurrentUser } from "lib/api/auth";
 import {User} from "interfaces/index";
+import SocialUserUpdate from "components/pages/SocialUserUpdate";
 
 export const AuthContext = createContext({} as {
   loading: boolean
@@ -33,7 +37,7 @@ const App: React.FC = () => {
     
       if (res?.status === 200) {
         setIsSignedIn(true)
-        setCurrentUser(res?.data.currentUser)
+        setCurrentUser(res?.data.data)
       } else {
         console.log("No current user")
       }
@@ -49,13 +53,13 @@ const App: React.FC = () => {
   }, [setCurrentUser])
 
   //ユーザーが未承認済みかどうかでルーティングを決定
-  //未承認だった場合は「/siginin」ページに促す
+  //未承認だった場合は「/social」(ソーシャルログイン)ページに促す
   const Private = ({children}: {children: React.ReactElement}) => {
     if(!loading) {
       if(isSignedIn) {
         return children
       } else {
-        return <Redirect to="/signin" />
+        return <Redirect to="/social" />
       }
     } else {
       return <></>
@@ -68,9 +72,14 @@ const App: React.FC = () => {
         <CommonLayout>
           <Switch>
             <Route exact path="/signup" component={SignUp} />
-            <Route exact path="/signin" component={SignIn} />
+            {/* 使用しないためコメントアウト */}
+            {/* <Route exact path="/signin" component={SignIn} /> */}
+            <Route exact path="/social" component={socialAuth} />
+            <Route exact path="/callback" component={Callback} />
+            <Route exact path="/social-user-update" component={SocialUserUpdate} />
             <Private>
               <Switch>
+                <Route exact path="/" component={Home} />
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/users" component={Users} />
                 <Route exact path="/chat_rooms" component={ChatRooms} />

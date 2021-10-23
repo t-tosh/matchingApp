@@ -25,7 +25,25 @@ export const signOut = () => {
 // 認証済みのユーザーを取得
 export const getCurrentUser = () => {
   if (!Cookies.get("_access_token") || !Cookies.get("_client") || !Cookies.get("_uid")) return
-  return client.get("auth/sessions", { headers: {
+  return client.get("auth/users/currentuser", { headers: {
+    "access-token": Cookies.get("_access_token"),
+    "client": Cookies.get("_client"),
+    "uid": Cookies.get("_uid")
+  }})
+}
+
+//ソーシャルログイン
+export const googleLogin = async () => {
+  await fetch("http://localhost:3001/api/v1/auth/google_oauth2")
+  .then(res => console.log(res))
+}
+
+export const githubLogin = () => {
+  return client.get("auth/github")
+}
+
+export const socialLogin = () => {
+  return client.get('/auth/validate_token', {headers: {
     "access-token": Cookies.get("_access_token"),
     "client": Cookies.get("_client"),
     "uid": Cookies.get("_uid")

@@ -146,6 +146,7 @@ const Home :React.FC = () => {
         Cookies.remove("_access_token")
         Cookies.remove("_client")
         Cookies.remove("_uid")
+        Cookies.remove("_interslice_session")
 
         setIsSignedIn(false)
         history.push("/signin")
