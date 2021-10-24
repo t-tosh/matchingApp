@@ -11,11 +11,16 @@ import NotFound from "components/pages/NotFound"
 
 //Googleログインテスト
 import socialAuth from "components/socialAuth/SocialAuth";
-import Callback from "components/pages/Callback";
+// import Callback from "components/pages/Callback";
 
 import { getCurrentUser } from "lib/api/auth";
 import {User} from "interfaces/index";
 import SocialUserUpdate from "components/pages/SocialUserUpdate";
+
+import { useLocation } from "react-router";
+import { useHistory} from "react-router-dom";
+import Cookies from "js-cookie";
+
 
 export const AuthContext = createContext({} as {
   loading: boolean
@@ -55,6 +60,24 @@ const App: React.FC = () => {
   //ユーザーが未承認済みかどうかでルーティングを決定
   //未承認だった場合は「/social」(ソーシャルログイン)ページに促す
   const Private = ({children}: {children: React.ReactElement}) => {
+    const history = useHistory()
+    const location =useLocation()
+
+    useEffect(() => {
+      if(location.search) {
+        const param = location.search
+        const urlParams = new URLSearchParams(param)
+        const auth_token = urlParams.getAll('auth_token')
+        const client_id = urlParams.getAll('client_id')
+        const uid = urlParams.getAll('uid')
+
+        Cookies.set("_access_token", auth_token)
+        Cookies.set("_client", client_id)
+        Cookies.set("_uid", uid)
+
+        history.push("/home")
+      }
+    }, [setIsSignedIn])
     if(!loading) {
       if(isSignedIn) {
         return children
@@ -75,7 +98,7 @@ const App: React.FC = () => {
             {/* 使用しないためコメントアウト */}
             {/* <Route exact path="/signin" component={SignIn} /> */}
             <Route exact path="/social" component={socialAuth} />
-            <Route exact path="/callback" component={Callback} />
+            {/* <Route exact path="/callback" component={Callback} /> */}
             <Route exact path="/social-user-update" component={SocialUserUpdate} />
             <Private>
               <Switch>
